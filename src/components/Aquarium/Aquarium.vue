@@ -189,7 +189,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="flex items-center justify-center mb-6">
+    <div class="flex items-center justify-center mb-6 bg-white rounded-full">
       <img src="/logo.png" alt="Logo" width="120" height="120" />
       <h3 class="text-center font-semibold text-4xl">Aquariumga Xush Kelibsiz !</h3>
     </div>
