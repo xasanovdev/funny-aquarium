@@ -2,7 +2,12 @@
   <div
     v-for="item in fishes"
     :key="item.id"
-    class="absolute transition-all duration-1000 ease-in-out"
+    :class="[
+      'absolute transition-all duration-1000 ease-in-out',
+      {
+        'border border-amber-500 rounded-xl': item.size < 0.8,
+      },
+    ]"
     :style="{
       left: item.coords.x + STEP / 10 + 'px',
       top: item.coords.y + STEP / 4 + 'px',
@@ -40,3 +45,5 @@ interface Props {
 
 defineProps<Props>()
 </script>
+
+<style scoped></style>

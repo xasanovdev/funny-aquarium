@@ -191,7 +191,7 @@ onMounted(() => {
   <div>
     <div class="flex items-center justify-center mb-6">
       <img src="/logo.png" alt="Logo" width="120" height="120" />
-      <h3 class="text-center font-semibold text-4xl font-serif">Aquariumga Xush Kelibsiz !</h3>
+      <h3 class="text-center font-semibold text-4xl">Aquariumga Xush Kelibsiz !</h3>
     </div>
 
     <AquariumWrapper :width="AQUARIUM_WIDTH" :height="AQUARIUM_HEIGHT" :statistics="statistics">
@@ -203,8 +203,8 @@ onMounted(() => {
 <style scoped>
 .bg-grid {
   background-image:
-    linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    linear-gradient(to right, rgba(0, 119, 255, 0.2) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 119, 255, 0.2) 1px, transparent 1px);
   background-size: 70px 70px;
 }
 </style>
