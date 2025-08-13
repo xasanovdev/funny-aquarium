@@ -58,16 +58,24 @@ const initialization = () => {
   const initCount = Math.random() * 10 + 10
 
   for (let i = 0; i < initCount; i++) {
-    fishes.value.push({
-      id: Math.floor(Math.random() * 10000),
-      gender: Math.random() < 0.5 ? 'female' : 'male',
+    createNewFish('initialFish')
+  }
+}
+
+const createNewFish = (type: 'newFish' | 'initialFish') => {
+  fishes.value.push({
+    id: Math.floor(Math.random() * 10000),
+    gender: Math.random() < 0.5 ? 'female' : 'male',
+    coords: {
       x: Math.floor(Math.random() * (AQUARIUM_WIDTH / STEP)) * STEP,
       y: Math.floor(Math.random() * (AQUARIUM_HEIGHT / STEP)) * STEP,
-      lifespan: Math.random() * 10 + 10,
-      alive: true,
-      size: 1,
-    })
-  }
+    },
+    isLoved: false,
+    lovedBy: [],
+    lifespan: Math.floor(Math.random() * 10) + 10,
+    alive: true,
+    size: type === 'newFish' ? 0.1 : 1, // New fish are smaller
+  })
 }
 
 /**
@@ -81,17 +89,31 @@ const addNewFish = () => {
 
   maleFish.forEach((male) => {
     femaleFish.forEach((female) => {
-      if (male.x === female.x && male.y === female.y) {
-        // Add a new fish
-        fishes.value.push({
-          id: Math.floor(Math.random() * 10000),
-          gender: Math.random() < 0.5 ? 'female' : 'male',
-          x: Math.floor(Math.random() * (AQUARIUM_WIDTH / STEP)) * STEP,
-          y: Math.floor(Math.random() * (AQUARIUM_HEIGHT / STEP)) * STEP,
-          lifespan: Math.random() * 10 + 10,
-          alive: true,
-          size: 1,
-        })
+      if (
+        male.coords.x === female.coords.x &&
+        male.coords.y === female.coords.y &&
+        male.size > 0.8 &&
+        female.size > 0.8
+      ) {
+        // Create a new fish at the same position
+        createNewFish('newFish')
+
+        // Mark the male and female fish as loved
+        male.isLoved = true
+        female.isLoved = true
+
+        // Add the male and female fish IDs to each other's lovedBy arrays
+        male.lovedBy.push(female.id)
+        female.lovedBy.push(male.id)
+
+        setTimeout(() => {
+          male.isLoved = false
+          female.isLoved = false
+
+          // Remove the male and female fish IDs from each other's lovedBy arrays
+          male.lovedBy = male.lovedBy.filter((id) => id !== female.id)
+          female.lovedBy = female.lovedBy.filter((id) => id !== male.id)
+        }, 2000)
       }
     })
   })
@@ -107,26 +129,40 @@ const updateFishes = () => {
 
   fishes.value.forEach((fish) => {
     if (fish.alive) {
-      // Update position based on random movement
-      fish.x += moveOptions[Math.floor(Math.random() * moveOptions.length)]
-      fish.y += moveOptions[Math.floor(Math.random() * moveOptions.length)]
-
-      // Keep fish within bounds
-      if (fish.x < 0) {
-        fish.x = 0
-      } else if (fish.x > AQUARIUM_WIDTH - STEP) {
-        fish.x = AQUARIUM_WIDTH - STEP
+      // If the fish is loved, it will not move
+      if (
+        fish.isLoved &&
+        fish.lovedBy.some((lovedId) => fishes.value.some((f) => f.id === lovedId && f.alive))
+      ) {
+        return
       }
 
-      if (fish.y < 0) {
-        fish.y = 0
-      } else if (fish.y > AQUARIUM_HEIGHT - STEP) {
-        fish.y = AQUARIUM_HEIGHT - STEP
+      // Update position based on random movement
+      fish.coords.x += moveOptions[Math.floor(Math.random() * moveOptions.length)]
+      fish.coords.y += moveOptions[Math.floor(Math.random() * moveOptions.length)]
+
+      // Keep fish within bounds
+      if (fish.coords.x < 0) {
+        fish.coords.x = 0
+      } else if (fish.coords.x > AQUARIUM_WIDTH - STEP) {
+        fish.coords.x = AQUARIUM_WIDTH - STEP
+      }
+
+      if (fish.coords.y < 0) {
+        fish.coords.y = 0
+      } else if (fish.coords.y > AQUARIUM_HEIGHT - STEP) {
+        fish.coords.y = AQUARIUM_HEIGHT - STEP
       }
 
       // Decrease lifespan
       fish.lifespan -= 1
 
+      // Increase size as lifespan decreases
+      if (fish.size < 1) {
+        fish.size += 0.2 // Increase size gradually
+      }
+
+      // If lifespan is over, mark fish as not alive
       if (fish.lifespan <= 0) {
         fish.alive = false
       }
@@ -138,9 +174,9 @@ onMounted(() => {
   initialization()
 
   setInterval(() => {
-    addNewFish()
-
     updateFishes()
+
+    addNewFish()
 
     // Remove dead fish
     fishes.value = fishes.value.filter((fish) => fish.alive)
