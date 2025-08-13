@@ -17,37 +17,9 @@ const statistics = ref({
   female: 0,
   alive: 0,
   dead: 0,
-  averageLifespan: 0,
-  averageSize: 0,
+  newBorn: 0,
+  loved: 0,
 })
-
-const updateStatistics = () => {
-  const total = fishes.value.length
-  const male = fishes.value.filter((fish) => fish.gender === 'male').length
-  const female = fishes.value.filter((fish) => fish.gender === 'female').length
-  const alive = fishes.value.filter((fish) => fish.alive).length
-  const dead = total - alive
-
-  const averageLifespan =
-    alive > 0
-      ? fishes.value.filter((fish) => fish.alive).reduce((sum, fish) => sum + fish.lifespan, 0) /
-        alive
-      : 0
-  const averageSize =
-    alive > 0
-      ? fishes.value.filter((fish) => fish.alive).reduce((sum, fish) => sum + fish.size, 0) / alive
-      : 0
-
-  statistics.value = {
-    total,
-    male,
-    female,
-    alive,
-    dead,
-    averageLifespan,
-    averageSize,
-  }
-}
 
 /**
  * Initializes the aquarium with a random number of fish.
@@ -63,6 +35,14 @@ const initialization = () => {
 }
 
 const createNewFish = (type: 'newFish' | 'initialFish') => {
+  statistics.value.total += 1
+  statistics.value.alive += 1
+
+  if (type === 'newFish') {
+    statistics.value.newBorn += 1
+    statistics.value.loved += 1
+  }
+
   fishes.value.push({
     id: crypto.randomUUID(),
     gender: Math.random() < 0.5 ? 'female' : 'male',
@@ -76,6 +56,10 @@ const createNewFish = (type: 'newFish' | 'initialFish') => {
     alive: true,
     size: type === 'newFish' ? 0.1 : 1, // New fish are smaller
   })
+}
+
+const filterDeadFish = () => {
+  return fishes.value.filter((fish) => fish.alive)
 }
 
 /**
@@ -174,29 +158,46 @@ onMounted(() => {
   initialization()
 
   setInterval(() => {
+    statistics.value.male = fishes.value.filter((fish) => fish.gender === 'male').length
+    statistics.value.female = fishes.value.filter((fish) => fish.gender === 'female').length
+    statistics.value.alive = fishes.value.filter((fish) => fish.alive).length
+
+    statistics.value.dead = statistics.value.total - statistics.value.alive
+
     updateFishes()
 
     addNewFish()
 
-    // Remove dead fish
-    fishes.value = fishes.value.filter((fish) => fish.alive)
-
-    // Update statistics
-    updateStatistics()
+    fishes.value = filterDeadFish()
   }, 1000) // Clean up every second
 })
 </script>
 
 <template>
-  <div>
-    <div class="flex items-center justify-center mb-6 bg-white rounded-full">
-      <img src="/logo.png" alt="Logo" width="120" height="120" />
-      <h3 class="text-center font-semibold text-4xl">Aquariumga Xush Kelibsiz !</h3>
+  <div class="flex justify-center gap-5 w-full">
+    <!-- Aquarium Statistics -->
+    <div class="flex flex-col max-w-sm w-full bg-white p-6 rounded-4xl shadow-md">
+      <h2 class="text-xl font-semibold mb-2">Statistika</h2>
+      <ul class="list-disc pl-5">
+        <li>Total: {{ statistics.total }}</li>
+        <li>Male: {{ statistics.male }}</li>
+        <li>Female: {{ statistics.female }}</li>
+        <li>Dead: {{ statistics.dead }}</li>
+        <li>Newborn: {{ statistics.newBorn }}</li>
+      </ul>
     </div>
 
-    <AquariumWrapper :width="AQUARIUM_WIDTH" :height="AQUARIUM_HEIGHT" :statistics="statistics">
-      <Fishes :fishes="fishes" :STEP="STEP" />
-    </AquariumWrapper>
+    <!-- Aquarium Content -->
+    <div class="">
+      <div class="flex items-center justify-center mb-5 bg-white rounded-4xl">
+        <img src="/logo.png" alt="Logo" width="120" height="120" />
+        <h3 class="text-center font-semibold text-4xl">Aquariumga Xush Kelibsiz !</h3>
+      </div>
+
+      <AquariumWrapper :width="AQUARIUM_WIDTH" :height="AQUARIUM_HEIGHT" :statistics="statistics">
+        <Fishes :fishes="fishes" :STEP="STEP" />
+      </AquariumWrapper>
+    </div>
   </div>
 </template>
 
