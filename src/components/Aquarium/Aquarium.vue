@@ -5,9 +5,9 @@ import Fishes from './Fishes.vue'
 import { onMounted, ref } from 'vue'
 import { IFish } from '../../types/fish'
 
-const AQUARIUM_WIDTH = 1200
-const AQUARIUM_HEIGHT = 800
-const STEP = 80
+const AQUARIUM_WIDTH = 1050
+const AQUARIUM_HEIGHT = 700
+const STEP = 70
 
 const fishes = ref<IFish[]>([])
 
@@ -64,7 +64,7 @@ const initialization = () => {
 
 const createNewFish = (type: 'newFish' | 'initialFish') => {
   fishes.value.push({
-    id: Math.floor(Math.random() * 10000),
+    id: crypto.randomUUID(),
     gender: Math.random() < 0.5 ? 'female' : 'male',
     coords: {
       x: Math.floor(Math.random() * (AQUARIUM_WIDTH / STEP)) * STEP,
@@ -188,9 +188,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <AquariumWrapper :width="AQUARIUM_WIDTH" :height="AQUARIUM_HEIGHT" :statistics="statistics">
-    <Fishes :fishes="fishes" :STEP="STEP" />
-  </AquariumWrapper>
+  <div>
+    <div class="flex items-center justify-center mb-6">
+      <img src="/logo.png" alt="Logo" width="120" height="120" />
+      <h3 class="text-center font-semibold text-4xl font-serif">Aquariumga Xush Kelibsiz !</h3>
+    </div>
+
+    <AquariumWrapper :width="AQUARIUM_WIDTH" :height="AQUARIUM_HEIGHT" :statistics="statistics">
+      <Fishes :fishes="fishes" :STEP="STEP" />
+    </AquariumWrapper>
+  </div>
 </template>
 
 <style scoped>
@@ -198,6 +205,6 @@ onMounted(() => {
   background-image:
     linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
-  background-size: 80px 80px;
+  background-size: 70px 70px;
 }
 </style>

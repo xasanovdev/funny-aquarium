@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ring-4 ring-blue-700 w-full relative overflow-hidden rounded-md bg-grid"
+    class="w-full border border-gray-400 relative rounded-md bg-grid"
     :style="{ width: width + 'px', height: height + 'px' }"
   >
     <slot />

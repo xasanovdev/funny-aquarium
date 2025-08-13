@@ -1,13 +1,13 @@
 export type Gender = 'male' | 'female'
 
 export interface IFish {
-  id: number
+  id: string
   gender: Gender
   lifespan: number
   alive: boolean
   size: number
   isLoved: boolean
-  lovedBy: number[]
+  lovedBy: string[]
   coords: IFishCoords
 }
 
