@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { IFish } from '../../types/fish'
+import { type IFish } from '../../types/fish'
 
 interface Props {
   fishes: IFish[]

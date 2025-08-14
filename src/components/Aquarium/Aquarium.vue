@@ -3,7 +3,7 @@ import AquariumWrapper from './AquariumWrapper.vue'
 import Fishes from './Fishes.vue'
 
 import { onMounted, ref } from 'vue'
-import { IFish } from '../../types/fish'
+import { type IFish } from '../../types/fish'
 
 const AQUARIUM_WIDTH = 1050
 const AQUARIUM_HEIGHT = 700
